@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-public class RoleParameter implements Serializable {
+public class FlagsParameter implements Serializable {
 
     @ApiModelProperty(position = 1, example = "Descrição")
     private String description;

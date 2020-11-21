@@ -7,34 +7,39 @@ import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @ToString
 @Entity
-@Table(name = "user")
+@Table(name = "question")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
         allowGetters = true)
-public class UserEntity implements Serializable {
+public class QuestionEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "id_role", nullable = false, referencedColumnName = "id")
-    private RoleEntity role;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "id_user", nullable = false, referencedColumnName = "id")
+    private UserEntity user;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "id_flag", nullable = false, referencedColumnName = "id")
+    private FlagsEntity flag;
 
     @Column
-    private String name;
+    private String comment;
+
     @Column
-    private String email;
-    @Column
-    private Date birthdate;
+    private boolean resolved;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -45,7 +50,4 @@ public class UserEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date updatedAt = new Date();
-    @Column
-    private boolean enabled;
-
 }

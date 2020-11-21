@@ -11,13 +11,16 @@ import java.io.Serializable;
 @ToString
 public class UserParameter implements Serializable {
 
-    @ApiModelProperty(position = 1, example = "Nome do Usuário.")
+    @ApiModelProperty(position = 1, example = "Codigo role.")
+    private Long id_role;
+
+    @ApiModelProperty(position = 2, example = "Nome do Usuário.")
     private String name;
 
-    @ApiModelProperty(position = 2, example = "Email do Usuário.")
+    @ApiModelProperty(position = 3, example = "Email do Usuário.")
     private String email;
 
-    @ApiModelProperty(position = 3, example = "Data Nascimento do Usuário.")
+    @ApiModelProperty(position = 4, example = "Data Nascimento do Usuário.")
     private String birthdate;
 
 }

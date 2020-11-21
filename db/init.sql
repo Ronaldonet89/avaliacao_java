@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS comexport;
 USE comexport;
 
 CREATE TABLE IF NOT EXISTS role (
-	Id smallint unsigned NOT NULL AUTO_INCREMENT,
+	Id integer NOT NULL AUTO_INCREMENT,
     Description varchar(255),
 	CreatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UpdatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -12,27 +12,30 @@ CREATE TABLE IF NOT EXISTS role (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS User (
-	Id smallint unsigned NOT NULL AUTO_INCREMENT,
-	Name varchar(255) unsigned NOT NULL,
-	Email varchar(200) unsigned NOT NULL,
-	Birthdate timestamp unsigned NOT NULL,
+	Id integer NOT NULL AUTO_INCREMENT,
+	Id_role integer,
+	Name varchar(255) NOT NULL,
+	Email varchar(200) NOT NULL,
+	Birthdate timestamp NOT NULL,
 	CreatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UpdateAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	Enabled boolean,
-    primary key (Id)
+    primary key (Id),
+	FOREIGN KEY (Id_role) REFERENCES role(Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS Reputation_User (
-	Id_User smallint unsigned NOT NULL AUTO_INCREMENT,
+	Id integer NOT NULL AUTO_INCREMENT,
+	Id_User integer NOT NULL,
     Score double,
 	CreatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UpdatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	primary key (Id_User)
+	primary key (Id),
+    FOREIGN KEY (Id_User) REFERENCES User(Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-
 CREATE TABLE IF NOT EXISTS Flags(
-	Id smallint unsigned NOT NULL AUTO_INCREMENT,
+	Id integer NOT NULL AUTO_INCREMENT,
 	Description varchar(255),
 	CreatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UpdatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -40,35 +43,41 @@ CREATE TABLE IF NOT EXISTS Flags(
     constraint primary key(Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-
 CREATE TABLE IF NOT EXISTS Question (
-	Id smallint unsigned NOT NULL AUTO_INCREMENT,
-	Id_User smallint,
-	Id_Flag smallint,
+	Id integer NOT NULL AUTO_INCREMENT,
+	Id_User integer NOT NULL,
+	Id_Flag integer NOT NULL,
 	Comment varchar(255),
 	Resolved boolean,
 	CreatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UpdatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    primary key(Id)
+    primary key(Id),
+	FOREIGN KEY (Id_User) REFERENCES User(Id),
+	FOREIGN KEY (Id_Flag) REFERENCES Flags(Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS Answer(
-	Id smallint unsigned NOT NULL AUTO_INCREMENT,
-	Id_User smallint,
-	Id_Question smallint,
+	Id integer NOT NULL AUTO_INCREMENT,
+	Id_User integer NOT NULL,
+	Id_Question integer NOT NULL,
 	Comment varchar(255),
 	CreatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UpdatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    primary key(Id)
+    primary key(Id),
+	FOREIGN KEY (Id_User) REFERENCES User(Id),
+	FOREIGN KEY (Id_Question) REFERENCES Question(Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-
 CREATE TABLE IF NOT EXISTS Vote_Answer (
-	Id_Question smallint unsigned NOT NULL,
-	Id_Answer smallint unsigned NOT NULL,
-	Id_User smallint unsigned NOT NULL,
+    Id integer NOT NULL AUTO_INCREMENT,
+	Id_Question integer NOT NULL,
+	Id_Answer integer NOT NULL,
+	Id_User integer NOT NULL,
 	Score double,
 	CreatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	UpdatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-
+	UpdatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	primary key(Id),
+	FOREIGN KEY (Id_User) REFERENCES User(Id),
+	FOREIGN KEY (Id_Question) REFERENCES Question(Id),
+	FOREIGN KEY (Id_Answer) REFERENCES Answer(Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -15,26 +16,18 @@ import java.util.Date;
 @Setter
 @ToString
 @Entity
-@Table(name = "user")
+@Table(name = "flags")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
         allowGetters = true)
-public class UserEntity implements Serializable {
+public class FlagsEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "id_role", nullable = false, referencedColumnName = "id")
-    private RoleEntity role;
-
     @Column
-    private String name;
-    @Column
-    private String email;
-    @Column
-    private Date birthdate;
+    private String description;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -47,5 +40,4 @@ public class UserEntity implements Serializable {
     private Date updatedAt = new Date();
     @Column
     private boolean enabled;
-
 }

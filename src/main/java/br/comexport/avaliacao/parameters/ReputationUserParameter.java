@@ -12,7 +12,10 @@ import java.math.BigDecimal;
 @ToString
 public class ReputationUserParameter implements Serializable {
 
-    @ApiModelProperty(position = 1, example = "Score.")
+    @ApiModelProperty(position = 1, example = "Código de Usuário")
+    private Long id_user;
+
+    @ApiModelProperty(position = 2, example = "Score.")
     private BigDecimal score;
 
 }

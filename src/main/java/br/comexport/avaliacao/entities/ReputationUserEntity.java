@@ -12,12 +12,13 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @ToString
 @Entity
-@Table(name = "Reputation_User")
+@Table(name = "reputation_user")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
         allowGetters = true)
@@ -25,7 +26,11 @@ public class ReputationUserEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_user;
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "id_user", nullable = false, referencedColumnName = "id")
+    private UserEntity user;
 
     @Column
     private BigDecimal score;
