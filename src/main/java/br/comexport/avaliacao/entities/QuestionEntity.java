@@ -19,8 +19,6 @@ import java.util.List;
 @Entity
 @Table(name = "question")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
-        allowGetters = true)
 public class QuestionEntity implements Serializable {
 
     @Id
@@ -50,4 +48,10 @@ public class QuestionEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date updatedAt = new Date();
+
+    public QuestionEntity() {}
+    public QuestionEntity(Long id) {
+        this();
+        setId(id);
+    }
 }

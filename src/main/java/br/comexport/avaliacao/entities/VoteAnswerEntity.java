@@ -19,8 +19,6 @@ import java.util.List;
 @Entity
 @Table(name = "vote_answer")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
-        allowGetters = true)
 public class VoteAnswerEntity implements Serializable {
 
     @Id

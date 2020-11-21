@@ -20,8 +20,6 @@ import java.util.List;
 @Entity
 @Table(name = "reputation_user")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
-        allowGetters = true)
 public class ReputationUserEntity implements Serializable {
 
     @Id

@@ -1,22 +1,20 @@
 package br.comexport.avaliacao.services;
 
+import br.comexport.avaliacao.entities.RoleEntity;
 import br.comexport.avaliacao.entities.UserEntity;
 import br.comexport.avaliacao.exception.ResourceNotFoundException;
-import br.comexport.avaliacao.errors.Error;
-import br.comexport.avaliacao.errors.ErrorDetails;
 import br.comexport.avaliacao.parameters.UserParameter;
 import br.comexport.avaliacao.repositories.UserRepository;
+import br.comexport.avaliacao.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
@@ -25,6 +23,9 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    Util util;
 
     public ResponseEntity<Object> applySave(UserParameter userParameter)  {
 
@@ -35,6 +36,8 @@ public class UserService {
         UserEntity userEntity = new UserEntity();
         userEntity.setName(userParameter.getName());
         userEntity.setEmail(userParameter.getEmail());
+        if(userParameter.getId_role().intValue() > 0)
+            userEntity.setRole(new RoleEntity(userParameter.getId_role()));
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         try {
             Date data = format.parse(userParameter.getBirthdate());
@@ -55,6 +58,21 @@ public class UserService {
     public UserEntity getUser(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+    }
+
+    public Page<UserEntity> getUserName(String name) {
+        return userRepository.selectUserName(name);
+    }
+
+    public Page<UserEntity> getUserEmail(String email) {
+        return userRepository.selectUserEmail(email);
+    }
+    public Page<UserEntity> getUserBirthdate(Date birthdate) {
+        return userRepository.selectUserBirthdate(birthdate);
+    }
+
+    public Page<UserEntity> getUserPage(String name, String email, Date birthdate) {
+        return userRepository.selectUser(name, email, birthdate);
     }
 
     public ResponseEntity<?> deleteUser(Long id){
@@ -91,13 +109,6 @@ public class UserService {
                 .body(userEntity);
     }
 
-    public Object exceptError(String message, String detalheMens){
-        List<ErrorDetails> errorDetails = new ArrayList<>();
-        ErrorDetails errorDet = new ErrorDetails(UUID.randomUUID().toString(), "400", message, null);
-        errorDetails.add(errorDet);
-        return new Error(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), detalheMens, "/comexport/v1", errorDetails);
-    }
-
     public static boolean isValidEmailAddress(String email) {
         boolean result = true;
         try {
@@ -123,16 +134,16 @@ public class UserService {
     public ResponseEntity<Object> validUser(UserParameter userParameter){
         if ( userParameter.getName().isEmpty() ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(exceptError("Dados inválidos","Nome não informado!"));
+                    .body(util.exceptError("Dados inválidos","Nome não informado!"));
         }
         if ( userParameter.getEmail().isEmpty() || !isValidEmailAddress(userParameter.getEmail()) ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(exceptError("Dados inválidos","Email não informado ou inválido!"));
+                    .body(util.exceptError("Dados inválidos","Email não informado ou inválido!"));
         }
 
         if ( userParameter.getBirthdate().isEmpty() || !isDataValid(userParameter.getBirthdate()) ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(exceptError("Dados inválidos","Data nascimento não informado ou inválida!"));
+                    .body(util.exceptError("Dados inválidos","Data nascimento não informado ou inválida!"));
         }
         return null;
     }

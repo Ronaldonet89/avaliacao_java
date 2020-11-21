@@ -1,6 +1,7 @@
 package br.comexport.avaliacao.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.beans.ConstructorProperties;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -18,8 +20,7 @@ import java.util.Date;
 @Entity
 @Table(name = "role")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
-        allowGetters = true)
+@AllArgsConstructor
 public class RoleEntity implements Serializable {
 
     @Id
@@ -40,4 +41,10 @@ public class RoleEntity implements Serializable {
     private Date updatedAt = new Date();
     @Column
     private boolean enabled;
+
+    public RoleEntity() {}
+    public RoleEntity(Long id) {
+        this();
+        setId(id);
+    }
 }

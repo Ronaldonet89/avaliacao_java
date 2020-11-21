@@ -21,7 +21,7 @@ public class FlagsService {
 
         FlagsEntity flagsEntity = new FlagsEntity();
         flagsEntity.setDescription(flagsParameter.getDescription());
-        flagsEntity.setEnabled(true);
+        flagsEntity.setEnabled(flagsParameter.isEnabled());
         flagsRepository.save(flagsEntity);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(flagsEntity);

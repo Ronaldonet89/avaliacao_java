@@ -1,13 +1,11 @@
 package br.comexport.avaliacao.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -18,8 +16,6 @@ import java.util.Date;
 @Entity
 @Table(name = "flags")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
-        allowGetters = true)
 public class FlagsEntity implements Serializable {
 
     @Id
@@ -40,4 +36,10 @@ public class FlagsEntity implements Serializable {
     private Date updatedAt = new Date();
     @Column
     private boolean enabled;
+
+    public FlagsEntity() {}
+    public FlagsEntity(Long id) {
+        this();
+        setId(id);
+    }
 }
