@@ -47,4 +47,9 @@ public class AnswerEntity implements Serializable {
     @LastModifiedDate
     private Date updatedAt = new Date();
 
+    public AnswerEntity() {}
+    public AnswerEntity(Long id) {
+        this();
+        setId(id);
+    }
 }
