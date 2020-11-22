@@ -48,4 +48,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
             nativeQuery = true)
     List<UserEntity> selectUserNameBirthdate(@Param("name") String name, @Param("birthdate") Date birthdate);
 
+
+    @Query(value = "select u.* from user u \n" +
+            "where u.id_role = :id_role ", nativeQuery = true)
+    List<UserEntity> selectUserRole(@Param("id_role") Long id_role);
+
 }
