@@ -3,14 +3,14 @@ package br.comexport.avaliacao.controllers;
 import br.comexport.avaliacao.entities.UserEntity;
 import br.comexport.avaliacao.parameters.UserParameter;
 import br.comexport.avaliacao.services.UserService;
+import br.comexport.avaliacao.util.Util;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,6 +23,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    Util util;
 
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = UserEntity.class),
@@ -51,36 +54,67 @@ public class UserController {
     }
 
     @GetMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<UserEntity> getUserPage(@RequestParam (value = "name") String name,
-                                        @RequestParam (value = "email") String email,
-                                        @RequestParam (value = "birthdate") String birthdate) {
+    public ResponseEntity<Object> getUserPage(@RequestParam (value = "name", defaultValue = "", required=false) String name,
+                                        @RequestParam (value = "email", defaultValue = "", required=false) String email,
+                                        @RequestParam (value = "birthdate",defaultValue = "", required=false) String birthdate) {
         if (!name.isEmpty() && !email.isEmpty() && !birthdate.isEmpty()) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
             try {
                 Date data = format.parse(birthdate);
-                return userService.getUserPage(name, email, data);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(userService.getUserList(name, email, data));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
         }
+
         if (!name.isEmpty() && email.isEmpty() && birthdate.isEmpty())
-            return userService.getUserName(name);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(userService.getUserName(name));
 
         if (name.isEmpty() && !email.isEmpty() && birthdate.isEmpty())
-            return userService.getUserEmail(email);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(userService.getUserEmail(email));
 
         if (name.isEmpty() && email.isEmpty() && !birthdate.isEmpty()) {
 
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
             try {
                 Date data = format.parse(birthdate);
-                return userService.getUserBirthdate(data);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(userService.getUserBirthdate(data));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        return null;
+        if (!name.isEmpty() && !email.isEmpty() && birthdate.isEmpty())
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(userService.getUserNameEmail(name,email));
+
+        if (name.isEmpty() && !email.isEmpty() && !birthdate.isEmpty()) {
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            try {
+                Date data = format.parse(birthdate);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(userService.getUserEmailBirthdate(email, data));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        }
+        if (!name.isEmpty() && email.isEmpty() && !birthdate.isEmpty()) {
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            try {
+                Date data = format.parse(birthdate);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(userService.getUserNameBirthdate(name, data));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(util.exceptError("Dados inválidos","parametros não informados!"));
     }
 
     @DeleteMapping("/user/{id}")

@@ -5,7 +5,6 @@ import br.comexport.avaliacao.entities.QuestionEntity;
 import br.comexport.avaliacao.entities.UserEntity;
 import br.comexport.avaliacao.entities.VoteAnswerEntity;
 import br.comexport.avaliacao.exception.ResourceNotFoundException;
-import br.comexport.avaliacao.parameters.AnswerParameter;
 import br.comexport.avaliacao.parameters.VoteAnswerParameter;
 import br.comexport.avaliacao.repositories.VoteAnswerRepository;
 import br.comexport.avaliacao.util.Util;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service

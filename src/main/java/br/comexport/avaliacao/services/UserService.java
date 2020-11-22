@@ -7,7 +7,6 @@ import br.comexport.avaliacao.parameters.UserParameter;
 import br.comexport.avaliacao.repositories.UserRepository;
 import br.comexport.avaliacao.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -60,19 +59,31 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
     }
 
-    public Page<UserEntity> getUserName(String name) {
-        return userRepository.selectUserName(name);
+    public List<UserEntity> getUserList(String name, String email, Date birthdate) {
+        return userRepository.selectUser("%"+name+"%", "%"+email+"%", birthdate);
     }
 
-    public Page<UserEntity> getUserEmail(String email) {
-        return userRepository.selectUserEmail(email);
+    public List<UserEntity> getUserName(String name) {
+        return userRepository.selectUserName("%"+name+"%");
     }
-    public Page<UserEntity> getUserBirthdate(Date birthdate) {
+
+    public List<UserEntity> getUserEmail(String email) {
+        return userRepository.selectUserEmail("%"+email+"%");
+    }
+    public List<UserEntity> getUserBirthdate(Date birthdate) {
         return userRepository.selectUserBirthdate(birthdate);
     }
 
-    public Page<UserEntity> getUserPage(String name, String email, Date birthdate) {
-        return userRepository.selectUser(name, email, birthdate);
+    public List<UserEntity> getUserNameEmail(String name, String email){
+        return userRepository.selectUserNameEmail("%"+name+"%", "%"+email+"%");
+    }
+
+    public List<UserEntity> getUserEmailBirthdate(String email, Date birthdate) {
+        return userRepository.selectUserEmailBirthdate("%"+email+"%", birthdate);
+    }
+
+    public List<UserEntity> getUserNameBirthdate(String name, Date birthdate) {
+        return userRepository.selectUserNameBirthdate("%"+name+"%", birthdate);
     }
 
     public ResponseEntity<?> deleteUser(Long id){
