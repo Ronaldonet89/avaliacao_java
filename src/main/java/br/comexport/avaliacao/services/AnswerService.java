@@ -3,9 +3,11 @@ package br.comexport.avaliacao.services;
 import br.comexport.avaliacao.entities.AnswerEntity;
 import br.comexport.avaliacao.entities.QuestionEntity;
 import br.comexport.avaliacao.entities.UserEntity;
+import br.comexport.avaliacao.entities.VoteAnswerEntity;
 import br.comexport.avaliacao.exception.ResourceNotFoundException;
 import br.comexport.avaliacao.parameters.AnswerParameter;
 import br.comexport.avaliacao.repositories.AnswerRepository;
+import br.comexport.avaliacao.repositories.VoteAnswerRepository;
 import br.comexport.avaliacao.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,9 @@ public class AnswerService {
 
     @Autowired
     AnswerRepository answerRepository;
+
+    @Autowired
+    VoteAnswerRepository voteAnswerRepository;
 
     @Autowired
     Util util;
@@ -51,6 +56,13 @@ public class AnswerService {
         AnswerEntity answer = answerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Answer", "id", id));
 
+        List<VoteAnswerEntity> voteAnswerEntities = voteAnswerRepository.selectAnswer(id);
+
+        if(voteAnswerEntities.size() > 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(util.exceptError("Dados inválidos","Não é possivel Resposta sem antes excluir a voto da resposta!"));
+        }
+
         answerRepository.delete(answer);
 
         return ResponseEntity.ok().build();
@@ -67,7 +79,9 @@ public class AnswerService {
 
         AnswerEntity answerEntity = new AnswerEntity();
         answerEntity.setComment(answerParameter.getComment());
-
+        answerEntity.setQuestion(new QuestionEntity(answerParameter.getId_question()));
+        answerEntity.setUser(new UserEntity(answerParameter.getId_user()));
+        answerEntity.setId(id);
         answerRepository.save(answerEntity);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(answerEntity);
@@ -79,12 +93,12 @@ public class AnswerService {
                     .body(util.exceptError("Dados inválidos","Comentário não informado!"));
         }
 
-        if ( answerParameter.getId_question().intValue() < 1 ) {
+        if ( answerParameter.getId_question().longValue() < 1 ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(util.exceptError("Dados inválidos","Pergunta não informada!"));
         }
 
-        if ( answerParameter.getId_user().intValue() < 1 ) {
+        if ( answerParameter.getId_user().longValue() < 1 ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(util.exceptError("Dados inválidos","Usuário não informado!"));
         }

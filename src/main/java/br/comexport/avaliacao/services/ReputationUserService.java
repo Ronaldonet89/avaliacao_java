@@ -3,7 +3,6 @@ package br.comexport.avaliacao.services;
 import br.comexport.avaliacao.entities.ReputationUserEntity;
 import br.comexport.avaliacao.entities.UserEntity;
 import br.comexport.avaliacao.exception.ResourceNotFoundException;
-import br.comexport.avaliacao.parameters.AnswerParameter;
 import br.comexport.avaliacao.parameters.ReputationUserParameter;
 import br.comexport.avaliacao.repositories.ReputationUserRepository;
 import br.comexport.avaliacao.util.Util;
@@ -28,12 +27,20 @@ public class ReputationUserService {
         if(isvalid != null)
             return isvalid;
 
-        ReputationUserEntity reputationUserEntity = new ReputationUserEntity();
-        reputationUserEntity.setUser(new UserEntity(reputationUserParameter.getId_user()));
-        reputationUserEntity.setScore(reputationUserParameter.getScore());
-        reputationUserRepository.save(reputationUserEntity);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(reputationUserEntity);
+
+        List<ReputationUserEntity> reputationEntity = reputationUserRepository.selectUser(reputationUserParameter.getId_user());
+
+        if (reputationEntity.size() == 0) {
+            ReputationUserEntity reputationUserEntity = new ReputationUserEntity();
+            reputationUserEntity.setUser(new UserEntity(reputationUserParameter.getId_user()));
+            reputationUserEntity.setScore(reputationUserParameter.getScore());
+            reputationUserRepository.save(reputationUserEntity);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(reputationUserEntity);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(util.exceptError("Dados inválidos","já existe o usuário na base de dados!"));
+        }
     }
 
     public List<ReputationUserEntity> getAllReputation(){
@@ -65,6 +72,7 @@ public class ReputationUserService {
         ReputationUserEntity reputationUserEntity = new ReputationUserEntity();
         reputationUserEntity.setUser(new UserEntity(reputationUserParameter.getId_user()));
         reputationUserEntity.setScore(reputationUserParameter.getScore());
+        reputationUserEntity.setId(id);
 
         reputationUserRepository.save(reputationUserEntity);
         return ResponseEntity.status(HttpStatus.OK)
@@ -72,14 +80,14 @@ public class ReputationUserService {
     }
 
     public ResponseEntity<Object> validReputationUser(ReputationUserParameter reputationUserParameter){
-        if ( reputationUserParameter.getId_user().intValue() < 1 ) {
+        if ( reputationUserParameter.getId_user().longValue() < 1 ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(util.exceptError("Dados inválidos","Usuário não informado!"));
         }
 
-        if ( reputationUserParameter.getScore().intValue() < 1 ) {
+        if ( reputationUserParameter.getScore().longValue() < 1 ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(util.exceptError("Dados inválidos","Score!"));
+                    .body(util.exceptError("Dados inválidos","Score não informado!"));
         }
         return null;
     }

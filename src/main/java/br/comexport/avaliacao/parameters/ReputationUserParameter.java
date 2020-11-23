@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -16,6 +15,6 @@ public class ReputationUserParameter implements Serializable {
     private Long id_user;
 
     @ApiModelProperty(position = 2, example = "Score.")
-    private BigDecimal score;
+    private Double score;
 
 }

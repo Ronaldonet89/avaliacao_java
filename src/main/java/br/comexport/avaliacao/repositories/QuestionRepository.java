@@ -11,7 +11,11 @@ import java.util.List;
 public interface QuestionRepository extends JpaRepository<QuestionEntity, Long> {
 
     @Query(value = "select q.* from question q \n" +
-            "where id_flag = :id_flag ", nativeQuery = true)
-    List<QuestionEntity> selectQuetionFlads(@Param("id_flag") Long id_flag);
+            "where q.id_flag = :id_flag ", nativeQuery = true)
+    List<QuestionEntity> selectQuestionFlags(@Param("id_flag") Long id_flag);
+
+    @Query(value = "select q.* from question q \n" +
+            "where q.id_user = :id_user ", nativeQuery = true)
+    List<QuestionEntity> selectQuestionUser(@Param("id_user") Long id_user);
 
 }

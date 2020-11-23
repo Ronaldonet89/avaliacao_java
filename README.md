@@ -41,52 +41,20 @@ Para rodar o projeto com docker, basta utilizar o `docker-compose` que tudo ser�
 docker-compose up
 ```
 
-## Request http para manipulação da tabelas
+## Swagger
 
-- Inserindo uma role
+```
+http://localhost:8080/swagger-ui.html#/
+```
 
-POST /comexport/v1/role HTTP/1.1
-Host: localhost:8080
-Content-Type: application/json
+## Banco de dados
 
-{
-  "description": "moderador",
-  "enabled": true
-}
+```
+db/init.sql
+``` 
 
-- Inserindo um usuário
+## Collection do postman para manipulação das tabelas
 
-POST /comexport/v1/user HTTP/1.1
-Host: localhost:8080
-Content-Type: application/json
-
-{
-   "name":"Ronaldo Sousa de Paulo",
-   "email":"ronaldonet@hotmail.com.br",
-   "birthdate":"17/02/1989",
-   "id_role": 1
-}
-
--Inserindo flags
-
-POST /comexport/v1/flags HTTP/1.1
-Host: localhost:8080
-Content-Type: application/json
-
-{
-  "description": "Java",
-  "enabled": true
-}
-
--Consulta Role por id
-
-GET /comexport/v1/role/1 HTTP/1.1
-Host: localhost:8080
-
--Consulta usuário por id
-
-GET /comexport/v1/user/1 HTTP/1.1
-Host: localhost:8080
-
-
-
+```
+Avaliacao-java.postman_collection.json
+``` 

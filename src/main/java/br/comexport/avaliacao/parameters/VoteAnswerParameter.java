@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -22,6 +21,6 @@ public class VoteAnswerParameter implements Serializable {
     private Long id_answer;
 
     @ApiModelProperty(position = 4, example = "Score")
-    private BigDecimal score;
+    private Double score;
 
 }

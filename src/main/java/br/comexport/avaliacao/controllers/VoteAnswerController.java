@@ -58,4 +58,12 @@ public class VoteAnswerController {
         return voteAnswerService.updateVoteAnswer(id, voteAnswerParameter);
     }
 
+    @GetMapping(value = "/vote-answer-all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getVoteAnswerAll(@RequestParam (value = "name", defaultValue = "", required=false) String name,
+                                                   @RequestParam (value = "email", defaultValue = "", required=false) String email,
+                                                   @RequestParam (value = "question",defaultValue = "", required=false) String question,
+                                                   @RequestParam (value = "answer",defaultValue = "", required=false) String answer) {
+        return voteAnswerService.consultAll(name, email, question, answer);
+    }
+
 }

@@ -1,10 +1,9 @@
 package br.comexport.avaliacao.services;
 
-import br.comexport.avaliacao.entities.RoleEntity;
-import br.comexport.avaliacao.entities.UserEntity;
+import br.comexport.avaliacao.entities.*;
 import br.comexport.avaliacao.exception.ResourceNotFoundException;
 import br.comexport.avaliacao.parameters.UserParameter;
-import br.comexport.avaliacao.repositories.UserRepository;
+import br.comexport.avaliacao.repositories.*;
 import br.comexport.avaliacao.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +23,18 @@ public class UserService {
     UserRepository userRepository;
 
     @Autowired
+    QuestionRepository questionRepository;
+
+    @Autowired
+    AnswerRepository answerRepository;
+
+    @Autowired
+    ReputationUserRepository reputationUserRepository;
+
+    @Autowired
+    VoteAnswerRepository voteAnswerRepository;
+
+    @Autowired
     Util util;
 
     public ResponseEntity<Object> applySave(UserParameter userParameter)  {
@@ -35,7 +46,7 @@ public class UserService {
         UserEntity userEntity = new UserEntity();
         userEntity.setName(userParameter.getName());
         userEntity.setEmail(userParameter.getEmail());
-        if(userParameter.getId_role().intValue() > 0)
+        if(userParameter.getId_role().longValue() > 0)
             userEntity.setRole(new RoleEntity(userParameter.getId_role()));
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         try {
@@ -90,6 +101,34 @@ public class UserService {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 
+        List<QuestionEntity> questionEntity = questionRepository.selectQuestionUser(id);
+
+        if (questionEntity.size() > 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(util.exceptError("Dados inválidos","Não é possivel excluir usuário sem antes excluir a pergunta!"));
+        }
+
+        List<AnswerEntity> answerEntity = answerRepository.selectAnswerUser(id);
+
+        if (answerEntity.size() > 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(util.exceptError("Dados inválidos","Não é possivel excluir usuário sem antes excluir a resposta!"));
+        }
+
+        List<ReputationUserEntity> reputationEntity = reputationUserRepository.selectUser(id);
+
+        if (reputationEntity.size() > 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(util.exceptError("Dados inválidos","Não é possivel excluir usuário sem antes excluir a reputação do Usuário!"));
+        }
+
+        List<VoteAnswerEntity> voteAnswerEntities = voteAnswerRepository.selectUser(id);
+
+        if (voteAnswerEntities.size() > 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(util.exceptError("Dados inválidos","Não é possivel excluir usuário sem antes excluir a voto da resposta!"));
+        }
+
         userRepository.delete(user);
 
         return ResponseEntity.ok().build();
@@ -106,6 +145,11 @@ public class UserService {
         UserEntity userEntity = new UserEntity();
         userEntity.setName(userParameter.getName());
         userEntity.setEmail(user.getEmail());
+        userEntity.setId(id);
+        if(userParameter.getId_role() != null || userParameter.getId_role().longValue() > 0)
+            userEntity.setRole(new RoleEntity(userParameter.getId_role()));
+        else
+            userEntity.setRole(new RoleEntity(user.getRole().getId()));
 
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         try {

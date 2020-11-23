@@ -52,7 +52,7 @@ public class FlagsService {
         FlagsEntity flags = flagsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Flags", "id", id));
 
-        List<QuestionEntity> questionEntity = questionRepository.selectQuetionFlads(flags.getId());
+        List<QuestionEntity> questionEntity = questionRepository.selectQuestionFlags(flags.getId());
         if (questionEntity.size() == 0) {
 
             flagsRepository.delete(flags);
